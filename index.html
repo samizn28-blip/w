@@ -178,7 +178,7 @@
 </head>
 <body>
 
-    <!-- المشهد الأول: فيديو العروسين بملء الشاشة ويعمل تلقائياً مع الصوت -->
+    <!-- المشهد الأول: الفيديو الافتتاحي -->
     <div id="scene1">
         <button class="skip-btn" onclick="transitionToInvitation()">تخطي ↩</button>
         <video id="introVideo" playsinline autoplay muted>
@@ -187,12 +187,12 @@
         </video>
     </div>
 
-    <!-- موسيقى خلفية هادئة تعمل طوال المشهد الثاني -->
+    <!-- موسيقى خلفية هادئة -->
     <audio loop id="bg-music">
         <source src="music.mp3" type="audio/mp3">
     </audio>
 
-    <!-- المشهد الثاني: بطاقة الدعوة الزجاجية الفاخرة المربوطة بصورتك وعمود Formspree -->
+    <!-- المشهد الثاني: بطاقة الدعوة -->
     <div id="scene2">
         <div class="card-container">
             <div class="card-initials">M & A</div>
@@ -209,7 +209,7 @@
                 <div class="detail-item">📍 المكان: صالة الأفراح - [اكتب المدينة أو القاعة هنا]</div>
             </div>
 
-            <!-- نموذج تأكيد الحضور العالمي المفتوح في سوريا للآيفون والأندرويد -->
+            <!-- نموذج تأكيد الحضور المحدث كلياً بصيغة JSON المعتمدة -->
             <div class="rsvp-form" id="rsvp-section">
                 <h3>تأكيد الحضور</h3>
                 <form id="weddingForm">
@@ -229,14 +229,12 @@
     </div>
 
 <script>
-    // الرابط المربوط بحساب Formspree الخاص بك مباشرة
     const FORMSPREE_URL = 'https://formspree.io';
     const video = document.getElementById('introVideo');
 
     window.addEventListener('load', function() {
         video.muted = false; 
         video.play().catch(e => {
-            console.log("المتصفح يطلب لمسة لتشغيل الصوت");
             window.addEventListener('click', () => { video.muted = false; video.play(); }, {once: true});
         });
     });
@@ -283,14 +281,19 @@
         submitBtn.disabled = true;
         msgDiv.innerText = "جاري إرسال ردك الكريم...";
 
-        const formData = new FormData();
-        formData.append("guestName", document.getElementById('guestName').value);
-        formData.append("attendanceStatus", document.getElementById('attendanceStatus').value);
+        // إصلاح جذري: صياغة وإرسال البيانات كـ JSON متوافق مع خوادم Formspree الرسمية للآيفون والأندرويد
+        const data = {
+            guestName: document.getElementById('guestName').value,
+            attendanceStatus: document.getElementById('attendanceStatus').value
+        };
 
         fetch(FORMSPREE_URL, {
             method: 'POST',
-            body: formData,
-            headers: { 'Accept': 'application/json' }
+            body: JSON.stringify(data),
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json' 
+            }
         })
         .then(response => {
             if (response.ok) {
