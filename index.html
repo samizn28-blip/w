@@ -181,13 +181,13 @@
             <p>بكل حب وباقة من الورود، يتشرف محمد وأريج بدعوتكم لمشاركتهم فرحة العمر في الليلة التي تجمع قلبينا.</p>
             <p>حضوركم ينير ليلتنا ويسعد قلوبنا.</p>
 
-            <!-- نموذج تأكيد الحضور المخفض والمباشر للهواتف الذكية -->
+            <!-- نموذج تأكيد الحضور المربوط بـ Formspree للتغلب على الحجب الجغرافي -->
             <div class="rsvp-form" id="rsvp-section">
                 <h3>تأكيد الحضور</h3>
                 <form id="weddingForm">
-                    <input type="text" id="guestName" placeholder="الاسم الكريم" required>
+                    <input type="text" name="الاسم" id="guestName" placeholder="الاسم الكريم" required>
                     
-                    <select id="attendanceStatus" required>
+                    <select name="الحالة" id="attendanceStatus" required>
                         <option value="" disabled selected>هل ستشرفنا بالحضور؟</option>
                         <option value="أوافق وبكل سرور">أوافق وبكل سرور</option>
                         <option value="أعتذر لظروف خاصة">أعتذر وأتمنى لكم الفرحة</option>
@@ -201,8 +201,8 @@
     </div>
 
 <script>
-    // تم تحديث الرابط الجديد والأحدث بنجاح هنا لربط جدولك مباشرة
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSyQCGHxTzqCvKmZ3RyB7oys6cSFbjOrJCkIohncnCo8MGKd4Dmcuk0kv1h0HTNAim/exec';
+    // تم تفعيل رابط الـ Formspree الخاص بك والمفتوح بالكامل في سوريا بنجاح هنا
+    const FORMSPREE_URL = 'https://formspree.io/f/xgaowyqv';
 
     // التحكم في الانتقال وتشغيل الموسيقى للهواتف الذكية
     document.getElementById('envBtn').addEventListener('click', function() {
@@ -237,19 +237,24 @@
         submitBtn.disabled = true;
         msgDiv.innerText = "جاري إرسال ردك...";
 
-        const name = document.getElementById('guestName').value;
-        const status = document.getElementById('attendanceStatus').value;
+        const formData = new FormData();
+        formData.append("الاسم الكريم", document.getElementById('guestName').value);
+        formData.append("حالة الحضور", document.getElementById('attendanceStatus').value);
 
-        // صياغة رابط نقل البيانات المتوافقة تماماً مع شروط الخصوصية لـ iOS وأندرويد
-        const formUrl = GOOGLE_SCRIPT_URL + "?name=" + encodeURIComponent(name) + "&status=" + encodeURIComponent(status);
-
-        fetch(formUrl, {
+        fetch(FORMSPREE_URL, {
             method: 'POST',
-            mode: 'no-cors'
+            body: formData,
+            headers: {
+                'Accept': 'application/json'
+            }
         })
-        .then(() => {
-            localStorage.setItem('hasRSVPed', 'true');
-            document.getElementById('rsvp-section').innerHTML = "<h3>تم إرسال تأكيدك بنجاح، ننتظركم بكل حب!</h3>";
+        .then(response => {
+            if (response.ok) {
+                localStorage.setItem('hasRSVPed', 'true');
+                document.getElementById('rsvp-section').innerHTML = "<h3>تم إرسال تأكيدك بنجاح، ننتظركم بكل حب!</h3>";
+            } else {
+                throw new Error('فشل الإرسال');
+            }
         })
         .catch(error => {
             console.error('Error:', error);
