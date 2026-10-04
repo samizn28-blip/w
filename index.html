@@ -181,7 +181,7 @@
             <p>بكل حب وباقة من الورود، يتشرف محمد وأريج بدعوتكم لمشاركتهم فرحة العمر في الليلة التي تجمع قلبينا.</p>
             <p>حضوركم ينير ليلتنا ويسعد قلوبنا.</p>
 
-            <!-- نموذج تأكيد الحضور (RSVP) المخفض والمباشر -->
+            <!-- نموذج تأكيد الحضور المخفض والمباشر للهواتف الذكية -->
             <div class="rsvp-form" id="rsvp-section">
                 <h3>تأكيد الحضور</h3>
                 <form id="weddingForm">
@@ -201,17 +201,17 @@
     </div>
 
 <script>
-    // رابط السكريبت الخاص بك مفعّل تلقائياً
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyk17Sw51QdwTChT2QhzN544_BG3DiV96GPiYaSLudUB4tnv3LqQ4nyR6z0ZIrJGfDy/exec';
+    // تم تحديث الرابط الجديد والأحدث بنجاح هنا لربط جدولك مباشرة
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSyQCGHxTzqCvKmZ3RyB7oys6cSFbjOrJCkIohncnCo8MGKd4Dmcuk0kv1h0HTNAim/exec';
 
-    // الانتقال المباشر والآمن بين المشاهد
+    // التحكم في الانتقال وتشغيل الموسيقى للهواتف الذكية
     document.getElementById('envBtn').addEventListener('click', function() {
         const s1 = document.getElementById('scene1');
         const s2 = document.getElementById('scene2');
         const music = document.getElementById('bg-music');
 
         try {
-            music.play().catch(e => console.log("تم تأجيل تشغيل الصوت حسب سياسة المتصفح"));
+            music.play().catch(e => console.log("المتصفح حجب الصوت تلقائياً"));
         } catch(err) { }
 
         s1.style.opacity = '0';
@@ -224,7 +224,7 @@
         }, 500);
     });
 
-    // الحماية من تكرار الرد من نفس المتصفح
+    // الحماية من تكرار الرد من نفس الجهاز
     if (localStorage.getItem('hasRSVPed')) {
         document.getElementById('rsvp-section').innerHTML = "<h3>شكراً لك! لقد تم تسجيل ردك مسبقاً بنجاح.</h3>";
     }
@@ -237,18 +237,15 @@
         submitBtn.disabled = true;
         msgDiv.innerText = "جاري إرسال ردك...";
 
-        const payload = {
-            name: document.getElementById('guestName').value,
-            status: document.getElementById('attendanceStatus').value,
-            guests: 0 // يتم تمرير القيمة صفر تلقائياً بعد إلغاء حقل عدد الحضور
-        };
+        const name = document.getElementById('guestName').value;
+        const status = document.getElementById('attendanceStatus').value;
 
-        fetch(GOOGLE_SCRIPT_URL, {
+        // صياغة رابط نقل البيانات المتوافقة تماماً مع شروط الخصوصية لـ iOS وأندرويد
+        const formUrl = GOOGLE_SCRIPT_URL + "?name=" + encodeURIComponent(name) + "&status=" + encodeURIComponent(status);
+
+        fetch(formUrl, {
             method: 'POST',
-            mode: 'no-cors',
-            cache: 'no-cache',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            mode: 'no-cors'
         })
         .then(() => {
             localStorage.setItem('hasRSVPed', 'true');
