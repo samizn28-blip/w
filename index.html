@@ -178,11 +178,6 @@
 </head>
 <body>
 
-    <!-- موسيقى خلفية هادئة تعمل طوال المشهد الثاني -->
-    <audio loop id="bg-music">
-        <source src="music.mp3" type="audio/mp3">
-    </audio>
-
     <!-- المشهد الأول: الفيديو الافتتاحي -->
     <div id="scene1">
         <button class="skip-btn" onclick="transitionToInvitation()">تخطي ↩</button>
@@ -192,6 +187,11 @@
         </video>
     </div>
 
+    <!-- موسيقى خلفية هادئة تعمل طوال المشهد الثاني -->
+    <audio loop id="bg-music">
+        <source src="music.mp3" type="audio/mp3">
+    </audio>
+
     <!-- المشهد الثاني: بطاقة الدعوة -->
     <div id="scene2">
         <div class="card-container">
@@ -199,7 +199,7 @@
             <h2>دعوة زفاف غالية</h2>
             
             <div class="invitation-text">
-                بكل حب وباقة من الورود يفوح شذاها، يتشرف محمد وأريج بدعوتكم لمشاركتهم فرحة العمر وبناء أولى لبنات حياتهم الزوجية السعيدة في الليلة التي تجمع شمل قلبينا. حضوركم ينير ليلتنا ويزيدنا بهجة وسروراً.
+                بكل حب وباقة من الورود يفوح شذاها، يتشرف محمد وأريج بدعوتكم لمشاركتهم فرحة العمر وبناء أولى لبنات حياتهم الزوجية السعيدة في الليلة التي تجمع شمل قلبينا. حضوركم ينير ليلتنا ويسزيدنا بهجة وسروراً.
             </div>
 
             <!-- تفاصيل الموعد والمكان الفعلي -->
@@ -209,17 +209,20 @@
                 <div class="detail-item">📍 المكان: صالة الأفراح - [اكتب المدينة أو القاعة هنا]</div>
             </div>
 
-            <!-- نموذج تأكيد الحضور المصلح والمطابق بالملي لشروط Formspree القياسية -->
+            <!-- نموذج الحضور الأصلي والكلاسيكي المطابق لكودك الشغال القديم بالملي -->
             <div class="rsvp-form" id="rsvp-section">
                 <h3>تأكيد الحضور</h3>
                 <form id="weddingForm">
-                    <input type="text" id="guestName" placeholder="الاسم الكريم" required>
+                    <!-- الخصائص البرمجية الموحدة لـ Formspree المأخوذة من كودك الناجح تماماً -->
+                    <input type="text" name="guestName" id="guestName" placeholder="الاسم الكريم" required>
                     
-                    <select id="attendanceStatus" required>
+                    <select name="attendanceStatus" id="attendanceStatus" required>
                         <option value="" disabled selected>هل ستشرفنا بالحضور؟</option>
                         <option value="أوافق وبكل سرور">أوافق وبكل سرور</option>
                         <option value="أعتذر لظروف خاصة">أعتذر وأتمنى لكم الفرحة والسعادة</option>
                     </select>
+
+                    <input type="number" name="guestCount" id="guestCount" placeholder="عدد المرافقين (إن وجد)" min="0" max="5">
 
                     <button type="submit" class="btn" id="submitBtn">إرسال التأكيد</button>
                 </form>
@@ -281,10 +284,8 @@
         submitBtn.disabled = true;
         msgDiv.innerText = "جاري إرسال ردك الكريم...";
 
-        // تم تعديل أسماء الحقول القياسية هنا لضمان قبول السيرفر الفوري للبيانات
-        const formData = new FormData();
-        formData.append("name", document.getElementById('guestName').value);
-        formData.append("status", document.getElementById('attendanceStatus').value);
+        // استدعاء آلية جمع الحقول الأصلية التلقائية التي نجحت معك 100% واعتمدها السيرفر
+        const formData = new FormData(this);
 
         fetch(FORMSPREE_URL, {
             method: 'POST',
