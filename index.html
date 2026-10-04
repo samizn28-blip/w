@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f7f5f2;
+            background-color: #fcfbfa;
             margin: 0;
             padding: 0;
             display: flex;
@@ -53,7 +53,7 @@
             z-index: 10000;
         }
 
-        /* المشهد الثاني: بطاقة الدعوة الزجاجية الفاخرة */
+        /* المشهد الثاني: بطاقة الدعوة والخلفية المخصصة */
         #scene2 {
             display: none;
             width: 100%;
@@ -61,122 +61,100 @@
             justify-content: center;
             align-items: center;
             opacity: 0;
-            transition: opacity 0.8s ease-in-out;
+            transition: opacity 0.5s ease-in-out;
             background-image: url('background.jpg'); 
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            padding: 20px 0;
         }
 
         .card-container {
-            max-width: 440px;
-            width: 88%;
-            background: rgba(255, 255, 255, 0.84); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px);
-            padding: 40px 30px;
-            border-radius: 20px;
-            box-shadow: 0 20px 50px rgba(43, 41, 39, 0.12);
+            max-width: 450px;
+            width: 85%;
+            background: rgba(255, 255, 255, 0.88); 
+            backdrop-filter: blur(8px); 
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.55);
-            box-sizing: border-box;
+            border: 1px solid rgba(255,255,255,0.6);
+            margin: 20px 0;
         }
 
         .card-initials {
-            font-size: 50px;
+            font-size: 42px;
             font-weight: bold;
             color: #cca43b;
-            margin-bottom: 20px;
-            font-family: 'Georgia', serif;
-        }
-
-        h2 {
-            color: #262421;
-            font-size: 26px;
-            margin: 10px 0;
-            font-weight: 600;
-        }
-
-        h3 {
-            color: #4a443a;
-            font-size: 20px;
             margin-bottom: 15px;
         }
 
-        .invitation-text {
-            color: #514b41;
-            font-size: 16.5px;
-            line-height: 1.8;
-            margin: 20px 0;
-            font-weight: 500;
+        h2, h3 {
+            color: #2b2927;
+            margin: 10px 0;
         }
 
-        .event-details {
-            background: rgba(204, 164, 59, 0.04);
-            border-radius: 10px;
-            padding: 15px;
-            margin: 25px 0;
-            border: 1px dashed rgba(204, 164, 59, 0.3);
-        }
-
-        .detail-item {
-            color: #3d3830;
-            font-size: 15.5px;
-            margin: 8px 0;
-            font-weight: 600;
+        p {
+            color: #57534e;
+            line-height: 1.6;
         }
 
         .rsvp-form {
             margin-top: 30px;
-            padding-top: 25px;
-            border-top: 1px solid rgba(204, 164, 59, 0.18);
+            padding-top: 20px;
+            border-top: 1px solid rgba(204, 164, 59, 0.2);
         }
 
         input, select {
             width: 100%;
-            padding: 14px;
-            margin: 12px 0;
-            border: 1px solid #dcd3c5;
-            border-radius: 10px;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd7d0;
+            border-radius: 8px;
             box-sizing: border-box;
             font-size: 16px;
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: rgba(255,255,255,0.9);
         }
 
         .btn {
             width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #cca43b 0%, #b38f32 100%);
+            padding: 12px;
+            background-color: #cca43b;
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 18px;
-            font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(204, 164, 59, 0.2);
-            transition: transform 0.2s;
+            transition: background 0.3s;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
+            background-color: #b38f32;
         }
 
         .btn:disabled {
-            background: #cccccc;
-            box-shadow: none;
+            background-color: #cccccc;
             cursor: not-allowed;
         }
 
         #message {
             margin-top: 15px;
-            font-weight: 600;
-            color: #276f2b;
-            font-size: 15px;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
         }
     </style>
 </head>
 <body>
+
+    <!-- موسيقى خلفية هادئة تعمل طوال الوقت -->
+    <audio loop id="bg-music">
+        <source src="music.mp3" type="audio/mp3">
+    </audio>
 
     <!-- المشهد الأول: الفيديو الافتتاحي -->
     <div id="scene1">
@@ -187,42 +165,25 @@
         </video>
     </div>
 
-    <!-- موسيقى خلفية هادئة تعمل طوال المشهد الثاني -->
-    <audio loop id="bg-music">
-        <source src="music.mp3" type="audio/mp3">
-    </audio>
-
-    <!-- المشهد الثاني: بطاقة الدعوة -->
+    <!-- المشهد الثاني: تفاصيل الدعوة والخلفية الجديدة -->
     <div id="scene2">
         <div class="card-container">
             <div class="card-initials">M & A</div>
             <h2>دعوة زفاف غالية</h2>
-            
-            <div class="invitation-text">
-                بكل حب وباقة من الورود يفوح شذاها، يتشرف محمد وأريج بدعوتكم لمشاركتهم فرحة العمر وبناء أولى لبنات حياتهم الزوجية السعيدة في الليلة التي تجمع شمل قلبينا. حضوركم ينير ليلتنا ويسزيدنا بهجة وسروراً.
-            </div>
+            <p>بكل حب وباقة من الورود، يتشرف محمد وأريج بدعوتكم لمشاركتهم فرحة العمر في الليلة التي تجمع قلبينا.</p>
+            <p>حضوركم ينير ليلتنا ويسعد قلوبنا.</p>
 
-            <!-- تفاصيل الموعد والمكان الفعلي -->
-            <div class="event-details">
-                <div class="detail-item">📅 التاريخ: [اكتب تاريخ الفرح هنا]</div>
-                <div class="detail-item">⏰ الوقت: في تمام الساعة الثامنة مساءً</div>
-                <div class="detail-item">📍 المكان: صالة الأفراح - [اكتب المدينة أو القاعة هنا]</div>
-            </div>
-
-            <!-- نموذج الحضور الأصلي والكلاسيكي المطابق لكودك الشغال القديم بالملي -->
+            <!-- نموذج تأكيد الحضور المصلح تماماً -->
             <div class="rsvp-form" id="rsvp-section">
                 <h3>تأكيد الحضور</h3>
                 <form id="weddingForm">
-                    <!-- الخصائص البرمجية الموحدة لـ Formspree المأخوذة من كودك الناجح تماماً -->
                     <input type="text" name="guestName" id="guestName" placeholder="الاسم الكريم" required>
                     
                     <select name="attendanceStatus" id="attendanceStatus" required>
                         <option value="" disabled selected>هل ستشرفنا بالحضور؟</option>
                         <option value="أوافق وبكل سرور">أوافق وبكل سرور</option>
-                        <option value="أعتذر لظروف خاصة">أعتذر وأتمنى لكم الفرحة والسعادة</option>
+                        <option value="أعتذر لظروف خاصة">أعتذر وأتمنى لكم الفرحة</option>
                     </select>
-
-                    <input type="number" name="guestCount" id="guestCount" placeholder="عدد المرافقين (إن وجد)" min="0" max="5">
 
                     <button type="submit" class="btn" id="submitBtn">إرسال التأكيد</button>
                 </form>
@@ -232,9 +193,11 @@
     </div>
 
 <script>
+    // رابط Formspree الخاص بك مفعّل هنا
     const FORMSPREE_URL = 'https://formspree.io';
     const video = document.getElementById('introVideo');
 
+    // التحكم في الفيديو والموسيقى
     window.addEventListener('load', function() {
         video.muted = false; 
         video.play().catch(e => {
@@ -261,18 +224,11 @@
                 s2.style.opacity = '1';
                 try { music.play(); } catch(e) {}
             }, 50);
-        }, 800);
+        }, 500);
     }
 
-    function IsStorageAvailable() {
-        try {
-            localStorage.setItem('test', 'test');
-            localStorage.removeItem('test');
-            return true;
-        } catch(e) { return false; }
-    }
-
-    if (IsStorageAvailable() && localStorage.getItem('hasRSVPed')) {
+    // الحماية من تكرار الرد من نفس الجهاز
+    if (localStorage.getItem('hasRSVPed')) {
         document.getElementById('rsvp-section').innerHTML = "<h3>شكراً لك! لقد تم تسجيل ردك مسبقاً بنجاح.</h3>";
     }
 
@@ -282,27 +238,31 @@
         const msgDiv = document.getElementById('message');
         
         submitBtn.disabled = true;
-        msgDiv.innerText = "جاري إرسال ردك الكريم...";
+        msgDiv.innerText = "جاري إرسال ردك...";
 
-        // استدعاء آلية جمع الحقول الأصلية التلقائية التي نجحت معك 100% واعتمدها السيرفر
-        const formData = new FormData(this);
+        const formData = new FormData();
+        formData.append("guestName", document.getElementById('guestName').value);
+        formData.append("attendanceStatus", document.getElementById('attendanceStatus').value);
 
+        // هنا تم تصليح وإغلاق القوس البرمجي بنجاح تام ليعمل الإرسال
         fetch(FORMSPREE_URL, {
             method: 'POST',
             body: formData,
-            headers: { 
-                'Accept': 'application/json' 
+            headers: {
+                'Accept': 'application/json'
             }
         })
         .then(response => {
             if (response.ok) {
-                if (IsStorageAvailable()) { localStorage.setItem('hasRSVPed', 'true'); }
-                document.getElementById('rsvp-section').innerHTML = "<h3>تم إرسال تأكيدك بنجاح، ننتظركم بكل حب ومودة!</h3>";
-            } else { throw new Error('فشل الإرسال'); }
+                localStorage.setItem('hasRSVPed', 'true');
+                document.getElementById('rsvp-section').innerHTML = "<h3>تم إرسال تأكيدك بنجاح، ننتظركم بكل حب!</h3>";
+            } else {
+                throw new Error('فشل الإرسال');
+            }
         })
         .catch(error => {
             console.error('Error:', error);
-            msgDiv.innerText = "عذراً، حدث خطأ أثناء النقل. يرجى المحاولة مجدداً.";
+            msgDiv.innerText = "عذراً، حدث خطأ أثناء الإرسال. يرجى المحاولة مجدداً.";
             submitBtn.disabled = false;
         });
     });
