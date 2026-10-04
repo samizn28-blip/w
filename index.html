@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fcfbfa;
+            background-color: #f7f5f2;
             margin: 0;
             padding: 0;
             display: flex;
@@ -17,52 +17,43 @@
             overflow-x: hidden;
         }
 
-        /* المشهد الأول: الظرف */
+        /* المشهد الأول: الفيديو الافتتاحي بملء الشاشة */
         #scene1 {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 100vh;
-            transition: opacity 0.5s ease-in-out;
-        }
-
-        .envelope {
-            width: 280px;
-            height: 180px;
-            background: #ffffff;
-            border-radius: 5px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            border: 1px solid #f0edeb;
+            height: 100%;
+            background-color: #000000;
             display: flex;
             justify-content: center;
             align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        #introVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .skip-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(5px);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
             cursor: pointer;
-            position: relative;
-            transition: transform 0.3s ease;
+            z-index: 10000;
         }
 
-        .envelope:hover {
-            transform: scale(1.03);
-        }
-
-        .envelope-initials {
-            font-size: 36px;
-            font-weight: bold;
-            color: #cca43b;
-            text-shadow: 0 0 10px rgba(204, 164, 59, 0.2);
-            font-family: 'Times New Roman', serif;
-        }
-
-        .click-hint {
-            margin-top: 20px;
-            color: #8a857c;
-            font-size: 14px;
-            animation: pulse 1.5s infinite;
-        }
-
-        /* المشهد الثاني: بطاقة الدعوة والخلفية المخصصة */
+        /* المشهد الثاني: بطاقة الدعوة الزجاجية الفاخرة */
         #scene2 {
             display: none;
             width: 100%;
@@ -70,128 +61,164 @@
             justify-content: center;
             align-items: center;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.8s ease-in-out;
             background-image: url('background.jpg'); 
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            padding: 20px 0;
         }
 
         .card-container {
-            max-width: 450px;
-            width: 85%;
-            background: rgba(255, 255, 255, 0.88); 
-            backdrop-filter: blur(8px); 
-            padding: 35px;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            max-width: 440px;
+            width: 88%;
+            background: rgba(255, 255, 255, 0.84); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(43, 41, 39, 0.12);
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.6);
-            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            box-sizing: border-box;
         }
 
         .card-initials {
-            font-size: 42px;
+            font-size: 50px;
             font-weight: bold;
             color: #cca43b;
+            margin-bottom: 20px;
+            font-family: 'Georgia', serif;
+        }
+
+        h2 {
+            color: #262421;
+            font-size: 26px;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: #4a443a;
+            font-size: 20px;
             margin-bottom: 15px;
         }
 
-        h2, h3 {
-            color: #2b2927;
-            margin: 10px 0;
+        .invitation-text {
+            color: #514b41;
+            font-size: 16.5px;
+            line-height: 1.8;
+            margin: 20px 0;
+            font-weight: 500;
         }
 
-        p {
-            color: #57534e;
-            line-height: 1.6;
+        .event-details {
+            background: rgba(204, 164, 59, 0.04);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 25px 0;
+            border: 1px dashed rgba(204, 164, 59, 0.3);
+        }
+
+        .detail-item {
+            color: #3d3830;
+            font-size: 15.5px;
+            margin: 8px 0;
+            font-weight: 600;
         }
 
         .rsvp-form {
             margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(204, 164, 59, 0.2);
+            padding-top: 25px;
+            border-top: 1px solid rgba(204, 164, 59, 0.18);
         }
 
         input, select {
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ddd7d0;
-            border-radius: 8px;
+            padding: 14px;
+            margin: 12px 0;
+            border: 1px solid #dcd3c5;
+            border-radius: 10px;
             box-sizing: border-box;
             font-size: 16px;
-            background-color: rgba(255,255,255,0.9);
+            background-color: rgba(255, 255, 255, 0.95);
         }
 
         .btn {
             width: 100%;
-            padding: 12px;
-            background-color: #cca43b;
+            padding: 14px;
+            background: linear-gradient(135deg, #cca43b 0%, #b38f32 100%);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 18px;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
+            box-shadow: 0 4px 15px rgba(204, 164, 59, 0.2);
+            transition: transform 0.2s;
         }
 
         .btn:hover {
-            background-color: #b38f32;
+            transform: translateY(-2px);
         }
 
         .btn:disabled {
-            background-color: #cccccc;
+            background: #cccccc;
+            box-shadow: none;
             cursor: not-allowed;
         }
 
         #message {
             margin-top: 15px;
-            font-weight: bold;
-            color: #2e7d32;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
+            font-weight: 600;
+            color: #276f2b;
+            font-size: 15px;
         }
     </style>
 </head>
 <body>
 
-    <!-- موسيقى خلفية هادئة تعمل طوال الوقت -->
+    <!-- المشهد الأول: فيديو العروسين بملء الشاشة ويعمل تلقائياً مع الصوت -->
+    <div id="scene1">
+        <button class="skip-btn" onclick="transitionToInvitation()">تخطي ↩</button>
+        <video id="introVideo" playsinline autoplay muted>
+            <source src="intro.mp4" type="video/mp4">
+            متصفحك لا يدعم تشغيل الفيديو.
+        </video>
+    </div>
+
+    <!-- موسيقى خلفية هادئة تعمل طوال المشهد الثاني -->
     <audio loop id="bg-music">
         <source src="music.mp3" type="audio/mp3">
     </audio>
 
-    <!-- المشهد الأول: الظرف -->
-    <div id="scene1">
-        <div class="envelope" id="envBtn">
-            <div class="envelope-initials">M & A</div>
-        </div>
-        <div class="click-hint">اضغط على الظرف لفتح الدعوة</div>
-    </div>
-
-    <!-- المشهد الثاني: تفاصيل الدعوة والخلفية الجديدة -->
+    <!-- المشهد الثاني: بطاقة الدعوة الزجاجية الفاخرة المربوطة بصورتك وعمود Formspree -->
     <div id="scene2">
         <div class="card-container">
             <div class="card-initials">M & A</div>
             <h2>دعوة زفاف غالية</h2>
-            <p>بكل حب وباقة من الورود، يتشرف محمد وأريج بدعوتكم لمشاركتهم فرحة العمر في الليلة التي تجمع قلبينا.</p>
-            <p>حضوركم ينير ليلتنا ويسعد قلوبنا.</p>
+            
+            <div class="invitation-text">
+                بكل حب وباقة من الورود يفوح شذاها، يتشرف محمد وأريج بدعوتكم لمشاركتهم فرحة العمر وبناء أولى لبنات حياتهم الزوجية السعيدة في الليلة التي تجمع شمل قلبينا. حضوركم ينير ليلتنا ويزيدنا بهجة وسروراً.
+            </div>
 
-            <!-- نموذج تأكيد الحضور المصلح والموحد لـ Formspree -->
+            <!-- تفاصيل الموعد والمكان الفعلي -->
+            <div class="event-details">
+                <div class="detail-item">📅 التاريخ: [اكتب تاريخ الفرح هنا]</div>
+                <div class="detail-item">⏰ الوقت: في تمام الساعة الثامنة مساءً</div>
+                <div class="detail-item">📍 المكان: صالة الأفراح - [اكتب المدينة أو القاعة هنا]</div>
+            </div>
+
+            <!-- نموذج تأكيد الحضور العالمي المفتوح في سوريا للآيفون والأندرويد -->
             <div class="rsvp-form" id="rsvp-section">
                 <h3>تأكيد الحضور</h3>
                 <form id="weddingForm">
-                    <!-- تم توحيد اسم الحقل هنا تماماً ليقرأه السيرفر بشكل منفصل -->
                     <input type="text" name="guestName" id="guestName" placeholder="الاسم الكريم" required>
                     
                     <select name="attendanceStatus" id="attendanceStatus" required>
                         <option value="" disabled selected>هل ستشرفنا بالحضور؟</option>
                         <option value="أوافق وبكل سرور">أوافق وبكل سرور</option>
-                        <option value="أعتذر لظروف خاصة">أعتذر وأتمنى لكم الفرحة</option>
+                        <option value="أعتذر لظروف خاصة">أعتذر وأتمنى لكم الفرحة والسعادة</option>
                     </select>
 
                     <button type="submit" class="btn" id="submitBtn">إرسال التأكيد</button>
@@ -202,31 +229,49 @@
     </div>
 
 <script>
-    // رابط Formspree الخاص بك
+    // الرابط المربوط بحساب Formspree الخاص بك مباشرة
     const FORMSPREE_URL = 'https://formspree.io';
+    const video = document.getElementById('introVideo');
 
-    // التحكم في الانتقال وتشغيل الموسيقى للهواتف الذكية
-    document.getElementById('envBtn').addEventListener('click', function() {
+    window.addEventListener('load', function() {
+        video.muted = false; 
+        video.play().catch(e => {
+            console.log("المتصفح يطلب لمسة لتشغيل الصوت");
+            window.addEventListener('click', () => { video.muted = false; video.play(); }, {once: true});
+        });
+    });
+
+    video.addEventListener('ended', function() {
+        transitionToInvitation();
+    });
+
+    function transitionToInvitation() {
         const s1 = document.getElementById('scene1');
         const s2 = document.getElementById('scene2');
         const music = document.getElementById('bg-music');
 
-        try {
-            music.play().catch(e => console.log("المتصفح حجب الصوت"));
-        } catch(err) { }
-
+        video.pause();
         s1.style.opacity = '0';
+        
         setTimeout(() => {
             s1.style.display = 'none';
             s2.style.display = 'flex';
             setTimeout(() => {
                 s2.style.opacity = '1';
+                try { music.play(); } catch(e) {}
             }, 50);
-        }, 500);
-    });
+        }, 800);
+    }
 
-    // الحماية من تكرار الرد من نفس الجهاز
-    if (localStorage.getItem('hasRSVPed')) {
+    function IsStorageAvailable() {
+        try {
+            localStorage.setItem('test', 'test');
+            localStorage.removeItem('test');
+            return true;
+        } catch(e) { return false; }
+    }
+
+    if (IsStorageAvailable() && localStorage.getItem('hasRSVPed')) {
         document.getElementById('rsvp-section').innerHTML = "<h3>شكراً لك! لقد تم تسجيل ردك مسبقاً بنجاح.</h3>";
     }
 
@@ -236,7 +281,7 @@
         const msgDiv = document.getElementById('message');
         
         submitBtn.disabled = true;
-        msgDiv.innerText = "جاري إرسال ردك...";
+        msgDiv.innerText = "جاري إرسال ردك الكريم...";
 
         const formData = new FormData();
         formData.append("guestName", document.getElementById('guestName').value);
@@ -245,21 +290,17 @@
         fetch(FORMSPREE_URL, {
             method: 'POST',
             body: formData,
-            headers: {
-                'Accept': 'application/json'
-            }
+            headers: { 'Accept': 'application/json' }
         })
         .then(response => {
             if (response.ok) {
-                localStorage.setItem('hasRSVPed', 'true');
-                document.getElementById('rsvp-section').innerHTML = "<h3>تم إرسال تأكيدك بنجاح، ننتظركم بكل حب!</h3>";
-            } else {
-                throw new Error('فشل الإرسال');
-            }
+                if (IsStorageAvailable()) { localStorage.setItem('hasRSVPed', 'true'); }
+                document.getElementById('rsvp-section').innerHTML = "<h3>تم إرسال تأكيدك بنجاح، ننتظركم بكل حب ومودة!</h3>";
+            } else { throw new Error('فشل الإرسال'); }
         })
         .catch(error => {
             console.error('Error:', error);
-            msgDiv.innerText = "عذراً، حدث خطأ أثناء الإرسال. يرجى المحاولة مجدداً.";
+            msgDiv.innerText = "عذراً، حدث خطأ أثناء النقل. يرجى المحاولة مجدداً.";
             submitBtn.disabled = false;
         });
     });
