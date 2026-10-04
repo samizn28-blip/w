@@ -199,7 +199,7 @@
             <h2>دعوة زفاف غالية</h2>
             
             <div class="invitation-text">
-                بكل حب وباقة من الورود يفوح شذاها، يتشرف محمد وأريج بدعوتكم لمشاركتهم فرحة العمر وبناء أولى لبنات حياتهم الزوجية السعيدة في الليلة التي تجمع شمل قلبينا. حضوركم ينير ليلتنا ويزيدنا بهجة وسروراً.
+                بكل حب وباقة من الورود يفوح شذاها، يتشرف محمد وأريج بدعوتكم لمشاركتهم فرحة العمر وبناء أولى لبنات حياتهم الزوجية السعيدة في الليلة التي تجمع شمل قلبينا. حضوركم ينير ليلتنا ويسزيدنا بهجة وسروراً.
             </div>
 
             <!-- تفاصيل الموعد والمكان الفعلي -->
@@ -209,13 +209,13 @@
                 <div class="detail-item">📍 المكان: صالة الأفراح - [اكتب المدينة أو القاعة هنا]</div>
             </div>
 
-            <!-- نموذج تأكيد الحضور المحدث كلياً بصيغة JSON المعتمدة -->
+            <!-- نموذج تأكيد الحضور المعتمد بطريقة FormData الناجحة -->
             <div class="rsvp-form" id="rsvp-section">
                 <h3>تأكيد الحضور</h3>
                 <form id="weddingForm">
-                    <input type="text" name="guestName" id="guestName" placeholder="الاسم الكريم" required>
+                    <input type="text" id="guestName" placeholder="الاسم الكريم" required>
                     
-                    <select name="attendanceStatus" id="attendanceStatus" required>
+                    <select id="attendanceStatus" required>
                         <option value="" disabled selected>هل ستشرفنا بالحضور؟</option>
                         <option value="أوافق وبكل سرور">أوافق وبكل سرور</option>
                         <option value="أعتذر لظروف خاصة">أعتذر وأتمنى لكم الفرحة والسعادة</option>
@@ -281,17 +281,15 @@
         submitBtn.disabled = true;
         msgDiv.innerText = "جاري إرسال ردك الكريم...";
 
-        // إصلاح جذري: صياغة وإرسال البيانات كـ JSON متوافق مع خوادم Formspree الرسمية للآيفون والأندرويد
-        const data = {
-            guestName: document.getElementById('guestName').value,
-            attendanceStatus: document.getElementById('attendanceStatus').value
-        };
+        // العودة إلى طريقة FormData التي نجحت معك تماماً وتخطت مشكلة "عذراً"
+        const formData = new FormData();
+        formData.append("guestName", document.getElementById('guestName').value);
+        formData.append("attendanceStatus", document.getElementById('attendanceStatus').value);
 
         fetch(FORMSPREE_URL, {
             method: 'POST',
-            body: JSON.stringify(data),
+            body: formData,
             headers: { 
-                'Content-Type': 'application/json',
                 'Accept': 'application/json' 
             }
         })
