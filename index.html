@@ -178,6 +178,11 @@
 </head>
 <body>
 
+    <!-- موسيقى خلفية هادئة تعمل طوال المشهد الثاني -->
+    <audio loop id="bg-music">
+        <source src="music.mp3" type="audio/mp3">
+    </audio>
+
     <!-- المشهد الأول: الفيديو الافتتاحي -->
     <div id="scene1">
         <button class="skip-btn" onclick="transitionToInvitation()">تخطي ↩</button>
@@ -186,11 +191,6 @@
             متصفحك لا يدعم تشغيل الفيديو.
         </video>
     </div>
-
-    <!-- موسيقى خلفية هادئة تعمل طوال المشهد الثاني -->
-    <audio loop id="bg-music">
-        <source src="music.mp3" type="audio/mp3">
-    </audio>
 
     <!-- المشهد الثاني: بطاقة الدعوة -->
     <div id="scene2">
@@ -209,7 +209,7 @@
                 <div class="detail-item">📍 المكان: صالة الأفراح - [اكتب المدينة أو القاعة هنا]</div>
             </div>
 
-            <!-- نموذج تأكيد الحضور المصلح والمبني على آلية التجميع اليدوي الناجحة -->
+            <!-- نموذج تأكيد الحضور المصلح والمطابق بالملي لشروط Formspree القياسية -->
             <div class="rsvp-form" id="rsvp-section">
                 <h3>تأكيد الحضور</h3>
                 <form id="weddingForm">
@@ -281,10 +281,10 @@
         submitBtn.disabled = true;
         msgDiv.innerText = "جاري إرسال ردك الكريم...";
 
-        // العودة بالملّي إلى التجميع اليدوي المباشر للقيم الذي نجح وتخطى حماية الهواتف
+        // تم تعديل أسماء الحقول القياسية هنا لضمان قبول السيرفر الفوري للبيانات
         const formData = new FormData();
-        formData.append("guestName", document.getElementById('guestName').value);
-        formData.append("attendanceStatus", document.getElementById('attendanceStatus').value);
+        formData.append("name", document.getElementById('guestName').value);
+        formData.append("status", document.getElementById('attendanceStatus').value);
 
         fetch(FORMSPREE_URL, {
             method: 'POST',
