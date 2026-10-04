@@ -199,7 +199,7 @@
             <h2>دعوة زفاف غالية</h2>
             
             <div class="invitation-text">
-                بكل حب وباقة من الورود يفوح شذاها، يتشرف محمد وأريج بدعوتكم لمشاركتهم فرحة العمر وبناء أولى لبنات حياتهم الزوجية السعيدة في الليلة التي تجمع شمل قلبينا. حضوركم ينير ليلتنا ويسزيدنا بهجة وسروراً.
+                بكل حب وباقة من الورود يفوح شذاها، يتشرف محمد وأريج بدعوتكم لمشاركتهم فرحة العمر وبناء أولى لبنات حياتهم الزوجية السعيدة في الليلة التي تجمع شمل قلبينا. حضوركم ينير ليلتنا ويزيدنا بهجة وسروراً.
             </div>
 
             <!-- تفاصيل الموعد والمكان الفعلي -->
@@ -209,13 +209,14 @@
                 <div class="detail-item">📍 المكان: صالة الأفراح - [اكتب المدينة أو القاعة هنا]</div>
             </div>
 
-            <!-- نموذج تأكيد الحضور المعتمد بطريقة FormData الناجحة -->
+            <!-- نموذج تأكيد الحضور المصلح والنهائي -->
             <div class="rsvp-form" id="rsvp-section">
                 <h3>تأكيد الحضور</h3>
                 <form id="weddingForm">
-                    <input type="text" id="guestName" placeholder="الاسم الكريم" required>
+                    <!-- تم تثبيت خاصية name هنا وهنا تكمن المشكلة السابقة -->
+                    <input type="text" name="guestName" id="guestName" placeholder="الاسم الكريم" required>
                     
-                    <select id="attendanceStatus" required>
+                    <select name="attendanceStatus" id="attendanceStatus" required>
                         <option value="" disabled selected>هل ستشرفنا بالحضور؟</option>
                         <option value="أوافق وبكل سرور">أوافق وبكل سرور</option>
                         <option value="أعتذر لظروف خاصة">أعتذر وأتمنى لكم الفرحة والسعادة</option>
@@ -281,10 +282,8 @@
         submitBtn.disabled = true;
         msgDiv.innerText = "جاري إرسال ردك الكريم...";
 
-        // العودة إلى طريقة FormData التي نجحت معك تماماً وتخطت مشكلة "عذراً"
-        const formData = new FormData();
-        formData.append("guestName", document.getElementById('guestName').value);
-        formData.append("attendanceStatus", document.getElementById('attendanceStatus').value);
+        // إرسال كـ FormData المباشرة والصحيحة بعد إضافة أسماء الحقول
+        const formData = new FormData(this);
 
         fetch(FORMSPREE_URL, {
             method: 'POST',
