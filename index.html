@@ -181,13 +181,14 @@
             <p>بكل حب وباقة من الورود، يتشرف محمد وأريج بدعوتكم لمشاركتهم فرحة العمر في الليلة التي تجمع قلبينا.</p>
             <p>حضوركم ينير ليلتنا ويسعد قلوبنا.</p>
 
-            <!-- نموذج تأكيد الحضور المربوط بـ Formspree للتغلب على الحجب الجغرافي -->
+            <!-- نموذج تأكيد الحضور المصلح والموحد لـ Formspree -->
             <div class="rsvp-form" id="rsvp-section">
                 <h3>تأكيد الحضور</h3>
                 <form id="weddingForm">
-                    <input type="text" name="الاسم" id="guestName" placeholder="الاسم الكريم" required>
+                    <!-- تم توحيد اسم الحقل هنا تماماً ليقرأه السيرفر بشكل منفصل -->
+                    <input type="text" name="guestName" id="guestName" placeholder="الاسم الكريم" required>
                     
-                    <select name="الحالة" id="attendanceStatus" required>
+                    <select name="attendanceStatus" id="attendanceStatus" required>
                         <option value="" disabled selected>هل ستشرفنا بالحضور؟</option>
                         <option value="أوافق وبكل سرور">أوافق وبكل سرور</option>
                         <option value="أعتذر لظروف خاصة">أعتذر وأتمنى لكم الفرحة</option>
@@ -201,8 +202,8 @@
     </div>
 
 <script>
-    // تم تفعيل رابط الـ Formspree الخاص بك والمفتوح بالكامل في سوريا بنجاح هنا
-    const FORMSPREE_URL = 'https://formspree.io/f/xgaowyqv';
+    // رابط Formspree الخاص بك
+    const FORMSPREE_URL = 'https://formspree.io';
 
     // التحكم في الانتقال وتشغيل الموسيقى للهواتف الذكية
     document.getElementById('envBtn').addEventListener('click', function() {
@@ -211,7 +212,7 @@
         const music = document.getElementById('bg-music');
 
         try {
-            music.play().catch(e => console.log("المتصفح حجب الصوت تلقائياً"));
+            music.play().catch(e => console.log("المتصفح حجب الصوت"));
         } catch(err) { }
 
         s1.style.opacity = '0';
@@ -238,8 +239,8 @@
         msgDiv.innerText = "جاري إرسال ردك...";
 
         const formData = new FormData();
-        formData.append("الاسم الكريم", document.getElementById('guestName').value);
-        formData.append("حالة الحضور", document.getElementById('attendanceStatus').value);
+        formData.append("guestName", document.getElementById('guestName').value);
+        formData.append("attendanceStatus", document.getElementById('attendanceStatus').value);
 
         fetch(FORMSPREE_URL, {
             method: 'POST',
