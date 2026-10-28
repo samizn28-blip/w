@@ -1,566 +1,586 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Backrooms & Dreamcore: Impostor Nightmare Engine</title>
+    <title>LEVEL 0: REMEMBER - Dreamcore Backrooms</title>
     <style>
-        :root {
-            --neon-yellow: #e6dc65;
-            --neon-glow: #fffb96;
-            --dream-pink: #ffb7c5;
-            --dream-cyan: #a0e7e5;
-            --horror-red: #ff003c;
-            --bg-dark: #050503;
-            --font-code: 'Courier New', Courier, monospace;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
 
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
             user-select: none;
         }
 
-        body, html {
-            width: 100%;
-            height: 100%;
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0b0b0b;
+            color: #d4c57b;
+            font-family: 'Share Tech Mono', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             overflow: hidden;
-            background-color: var(--bg-dark);
-            font-family: var(--font-code);
-            color: #ffffff;
         }
 
         #game-container {
             position: relative;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 800px;
+            height: 600px;
+            background: #111;
+            border: 4px solid #332f1a;
+            box-shadow: 0 0 50px rgba(212, 197, 123, 0.1);
+            overflow: hidden;
         }
 
         canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            image-rendering: pixelated;
+            display: block;
+            background: #e4be6b;
+            filter: contrast(1.1) brightness(0.9);
         }
 
-        #crt-overlay {
+        /* CRT & VHS Filter Effects */
+        .crt::before {
+            content: " ";
+            display: block;
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 5;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 10;
+            background-size: 100% 3px, 3px 100%;
             pointer-events: none;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 4px, 6px 100%;
-            opacity: 0.85;
         }
 
+        .crt::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: radial-gradient(circle at center, rgba(0,0,0,0) 60%, rgba(0,0,0,0.85) 100%);
+            z-index: 11;
+            pointer-events: none;
+        }
+
+        .flicker {
+            animation: textFlicker 0.15s infinite;
+        }
+
+        @keyframes textFlicker {
+            0% { opacity: 0.97; }
+            50% { opacity: 1; }
+            100% { opacity: 0.95; }
+        }
+
+        /* HUD Overlay */
         #hud {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            z-index: 10;
+            top: 15px;
+            left: 15px;
+            right: 15px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
+            z-index: 15;
             pointer-events: none;
+            font-family: 'VT323', monospace;
+            font-size: 24px;
+            text-shadow: 2px 2px #000;
         }
 
-        .hud-panel {
-            background: rgba(10, 10, 5, 0.85);
-            border: 2px solid var(--neon-yellow);
-            box-shadow: 0 0 15px rgba(230, 220, 101, 0.3);
-            padding: 10px 20px;
-            border-radius: 4px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            text-shadow: 0 0 8px var(--neon-yellow);
+        .hud-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
-        .hud-panel.dreamcore-mode {
-            border-color: var(--dream-pink);
-            box-shadow: 0 0 15px rgba(255, 183, 197, 0.5);
-            color: var(--dream-cyan);
-            text-shadow: 0 0 8px var(--dream-pink);
-        }
-
-        .sanity-container {
-            width: 160px;
+        .bar-container {
+            width: 150px;
             height: 14px;
-            background: #111;
-            border: 1px solid var(--neon-yellow);
-            margin-top: 5px;
-            overflow: hidden;
+            border: 2px solid #d4c57b;
+            background: rgba(0,0,0,0.5);
+            padding: 1px;
         }
 
-        #sanity-bar {
-            width: 100%;
+        #sanity-fill {
             height: 100%;
-            background: var(--neon-yellow);
-            transition: width 0.1s linear, background-color 0.3s ease;
+            width: 100%;
+            background: #b83a3a;
+            transition: width 0.1s linear;
         }
 
-        #screen-overlay {
+        /* UI Screens */
+        .screen {
             position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 9, 7, 0.92);
             z-index: 20;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             text-align: center;
             padding: 40px;
-            background: rgba(5, 5, 5, 0.93);
-            border: 2px solid var(--horror-red);
-            box-shadow: 0 0 35px rgba(255, 0, 60, 0.5);
-            border-radius: 8px;
-            max-width: 600px;
-            width: 85%;
-            transition: opacity 0.4s ease;
         }
 
-        #screen-overlay.hidden {
-            opacity: 0;
+        h1 {
+            font-family: 'VT323', monospace;
+            font-size: 64px;
+            color: #f3e5ab;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(243, 229, 171, 0.5);
+        }
+
+        p {
+            font-size: 18px;
+            color: #a89f78;
+            max-width: 500px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: transparent;
+            border: 2px solid #d4c57b;
+            color: #d4c57b;
+            padding: 12px 30px;
+            font-family: 'VT323', monospace;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 15px rgba(212, 197, 123, 0.1);
+        }
+
+        .btn:hover {
+            background: #d4c57b;
+            color: #111;
+            box-shadow: 0 0 25px rgba(212, 197, 123, 0.4);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* VHS Timestamp */
+        #vhs-timestamp {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            z-index: 15;
+            font-family: 'VT323', monospace;
+            font-size: 22px;
+            color: #d4c57b;
+            text-shadow: 2px 2px #000;
             pointer-events: none;
         }
 
-        #main-title {
-            font-size: 2.5rem;
-            color: var(--horror-red);
-            text-shadow: 0 0 20px var(--horror-red);
-            margin-bottom: 15px;
-            letter-spacing: 2px;
-        }
-
-        #desc-text {
-            font-size: 1rem;
-            line-height: 1.7;
-            color: #d0d0d0;
-            margin-bottom: 25px;
-        }
-
-        #btn-start {
-            background: transparent;
-            color: var(--neon-yellow);
-            border: 2px solid var(--neon-yellow);
-            padding: 12px 35px;
-            font-size: 1.2rem;
-            font-family: inherit;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(230, 220, 101, 0.3);
-            transition: all 0.2s ease;
-        }
-
-        #btn-start:hover {
-            background: var(--neon-yellow);
-            color: #000;
-            box-shadow: 0 0 25px var(--neon-yellow);
-            transform: scale(1.05);
-        }
-
-        #jumpscare-overlay {
+        #rec-indicator {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 30;
-            background-color: #000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
+            top: 15px;
+            right: 15px;
+            z-index: 15;
+            font-family: 'VT323', monospace;
+            font-size: 22px;
+            color: #ff3333;
+            animation: blink 1s infinite;
+            pointer-events: none;
         }
 
-        #jumpscare-overlay.active {
-            display: flex;
-            animation: redFlash 0.04s infinite alternate;
-        }
-
-        @keyframes redFlash {
-            0% { background-color: #aa0011; }
-            100% { background-color: #000000; }
-        }
-
-        .scary-impostor {
-            width: 650px;
-            height: 650px;
-            background: radial-gradient(circle, #ff0022 10%, #330000 55%, #000 85%);
-            border-radius: 50%;
-            position: relative;
-            box-shadow: 0 0 120px #ff0022;
-            animation: violentShake 0.04s infinite;
-        }
-
-        .impostor-eye-large {
-            position: absolute;
-            top: 28%;
-            width: 130px;
-            height: 130px;
-            background: #ffffff;
-            border-radius: 50%;
-            box-shadow: 0 0 25px #ffffff;
-        }
-
-        .impostor-eye-large.left { left: 22%; }
-        .impostor-eye-large.right { right: 22%; }
-
-        .scary-pupil {
-            width: 28px;
-            height: 28px;
-            background: #000000;
-            border-radius: 50%;
-            position: absolute;
-            top: 38%;
-            left: 38%;
-        }
-
-        .scary-mouth {
-            position: absolute;
-            bottom: 12%;
-            left: 15%;
-            width: 70%;
-            height: 180px;
-            background: #000000;
-            border-radius: 0 0 140px 140px;
-            border: 5px solid #ff0022;
-        }
-
-        @keyframes violentShake {
-            0% { transform: translate(6px, 6px) scale(1.15); }
-            100% { transform: translate(-6px, -6px) scale(1.22); }
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div id="game-container">
-        <div id="crt-overlay"></div>
+<div id="game-container" class="crt">
+    <!-- VHS UI overlay -->
+    <div id="rec-indicator" class="hidden">REC ● SP</div>
+    <div id="vhs-timestamp" class="hidden">1997-07-14 03:42:11</div>
 
-        <div id="hud">
-            <div id="hud-stage" class="hud-panel">المرحلة: الباك رومز (Level 0)</div>
-            <div id="hud-sanity-panel" class="hud-panel">
-                الاستقرار العقلي
-                <div class="sanity-container">
-                    <div id="sanity-bar"></div>
-                </div>
-            </div>
+    <!-- HUD -->
+    <div id="hud" class="hidden">
+        <div class="hud-group">
+            <div>CORE MEMORIES: <span id="fragments-count">0</span>/5</div>
         </div>
-
-        <div id="screen-overlay">
-            <h1 id="main-title">THE BACKROOMS</h1>
-            <p id="desc-text">
-                لقد انزلقت خارج حدود الواقع لتجد نفسك في ممرات الباك رومز الصفراء اللانهائية.<br>
-                احذر من طنين أضواء النيون المتذبذبة، وابحث عن بوابة النور المفضية لعالم الدريم كور السريالي.<br>
-                شخصية "الامبوستر" تتجول في الممرات... كلما اقترب منك، تشتد النغمة الصوتية المرعبة!
-            </p>
-            <button id="btn-start">بدء اللعب</button>
+        <div class="hud-group" style="align-items: flex-end;">
+            <div>SANITY</div>
+            <div class="bar-container"><div id="sanity-fill"></div></div>
         </div>
-
-        <div id="jumpscare-overlay">
-            <div class="scary-impostor">
-                <div class="impostor-eye-large left"><div class="scary-pupil"></div></div>
-                <div class="impostor-eye-large right"><div class="scary-pupil"></div></div>
-                <div class="scary-mouth"></div>
-            </div>
-        </div>
-
-        <canvas id="gameCanvas"></canvas>
     </div>
 
-    <script>
-        class HorrorAudioSystem {
-            constructor() {
-                this.audioCtx = null;
-                this.isReady = false;
-                this.neonOsc = null;
-                this.neonGain = null;
-                this.neonFilter = null;
-                this.threatOscA = null;
-                this.threatOscB = null;
-                this.threatGain = null;
-                this.pannerNode = null;
-                this.dreamOsc = null;
-                this.dreamGain = null;
-            }
+    <!-- Canvas -->
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
 
-            init() {
-                if (this.isReady) return;
-                const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
-                this.audioCtx = new AudioCtxClass();
-                this.isReady = true;
+    <!-- Start Menu -->
+    <div id="start-screen" class="screen">
+        <h1 class="flicker">LEVEL 0</h1>
+        <p>Do you remember this place? The hum of fluorescent lights, endless yellow wallpaper, and the smell of moist carpet. Collect 5 Core Memories to escape before the Anomaly finds you.</p>
+        <button class="btn" id="start-btn">ENTER BACKROOMS [START]</button>
+    </div>
 
-                this.buildNeonHumNode();
-                this.buildThreatDroneNode();
-                this.buildDreamcorePadNode();
-            }
+    <!-- Game Over Screen -->
+    <div id="gameover-screen" class="screen hidden">
+        <h1 style="color: #b83a3a;">YOU WERE FORGOTTEN</h1>
+        <p id="gameover-reason">The anomaly absorbed your consciousness into the drywall.</p>
+        <button class="btn" id="restart-btn">WAKE UP [RETRY]</button>
+    </div>
 
-            buildNeonHumNode() {
-                this.neonOsc = this.audioCtx.createOscillator();
-                this.neonGain = this.audioCtx.createGain();
-                this.neonFilter = this.audioCtx.createBiquadFilter();
+    <!-- Win Screen -->
+    <div id="win-screen" class="screen hidden">
+        <h1 style="color: #7bd493;">MEMORY RESTORED</h1>
+        <p>You broke through the recursive loops of Level 0 and woke up in reality... or did you?</p>
+        <button class="btn" id="win-restart-btn">PLAY AGAIN</button>
+    </div>
+</div>
 
-                this.neonOsc.type = 'sawtooth';
-                this.neonOsc.frequency.setValueAtTime(60, this.audioCtx.currentTime);
+<script>
+    // --- AUDIO GENERATOR (Web Audio API for Fluorescent Hum & Stings) ---
+    let audioCtx = null;
+    let humOsc = null;
+    let humGain = null;
 
-                this.neonFilter.type = 'lowpass';
-                this.neonFilter.frequency.setValueAtTime(320, this.audioCtx.currentTime);
+    function initAudio() {
+        if (audioCtx) return;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-                this.neonGain.gain.setValueAtTime(0.07, this.audioCtx.currentTime);
+        // Fluorescent light 60Hz hum with slight detune and filtering
+        humOsc = audioCtx.createOscillator();
+        humOsc.type = 'sawtooth';
+        humOsc.frequency.setValueAtTime(60, audioCtx.currentTime);
 
-                this.neonOsc.connect(this.neonFilter);
-                this.neonFilter.connect(this.neonGain);
-                this.neonGain.connect(this.audioCtx.destination);
+        let filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(180, audioCtx.currentTime);
 
-                this.neonOsc.start();
-            }
+        humGain = audioCtx.createGain();
+        humGain.gain.setValueAtTime(0.04, audioCtx.currentTime);
 
-            buildThreatDroneNode() {
-                this.threatOscA = this.audioCtx.createOscillator();
-                this.threatOscB = this.audioCtx.createOscillator();
-                this.threatGain = this.audioCtx.createGain();
-                
-                if (this.audioCtx.createPanner) {
-                    this.pannerNode = this.audioCtx.createPanner();
-                    this.pannerNode.panningModel = 'HRTF';
-                    this.pannerNode.distanceModel = 'exponential';
-                }
+        humOsc.connect(filter);
+        filter.connect(humGain);
+        humGain.connect(audioCtx.destination);
+        humOsc.start();
+    }
 
-                this.threatOscA.type = 'sawtooth';
-                this.threatOscB.type = 'triangle';
+    function playBeep(freq, type, duration) {
+        if (!audioCtx) return;
+        let osc = audioCtx.createOscillator();
+        let gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    }
 
-                this.threatOscA.frequency.setValueAtTime(38, this.audioCtx.currentTime);
-                this.threatOscB.frequency.setValueAtTime(42, this.audioCtx.currentTime);
+    // --- GAME CONFIG & STATE ---
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
 
-                this.threatGain.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
+    const TILE_SIZE = 40;
+    const MAP_WIDTH = 20; // 20 * 40 = 800
+    const MAP_HEIGHT = 15; // 15 * 40 = 600
 
-                if (this.pannerNode) {
-                    this.threatOscA.connect(this.threatGain);
-                    this.threatOscB.connect(this.threatGain);
-                    this.threatGain.connect(this.pannerNode);
-                    this.pannerNode.connect(this.audioCtx.destination);
-                } else {
-                    this.threatOscA.connect(this.threatGain);
-                    this.threatOscB.connect(this.threatGain);
-                    this.threatGain.connect(this.audioCtx.destination);
-                }
+    let gameState = 'MENU'; // MENU, PLAYING, GAMEOVER, WIN
+    let score = 0;
+    let sanity = 100;
+    let gameTimer = 0;
 
-                this.threatOscA.start();
-                this.threatOscB.start();
-            }
+    // Player Object
+    let player = {
+        x: 80,
+        y: 80,
+        radius: 12,
+        speed: 3.2
+    };
 
-            buildDreamcorePadNode() {
-                this.dreamOsc = this.audioCtx.createOscillator();
-                this.dreamGain = this.audioCtx.createGain();
+    // Imposter / Anomaly Object
+    let imposter = {
+        x: 700,
+        y: 500,
+        radius: 14,
+        speed: 2.1,
+        state: 'PATROL' // PATROL, CHASE
+    };
 
-                this.dreamOsc.type = 'sine';
-                this.dreamOsc.frequency.setValueAtTime(216, this.audioCtx.currentTime);
-                this.dreamGain.gain.setValueAtTime(0.0, this.audioCtx.currentTime);
+    let keys = {};
+    let fragments = [];
+    let dreamAssets = []; // Surreal dreamcore decorations (eyes, doors, clocks)
 
-                this.dreamOsc.connect(this.dreamGain);
-                this.dreamGain.connect(this.audioCtx.destination);
-                this.dreamOsc.start();
-            }
+    // Backrooms Maze Layout (0 = Empty hallway, 1 = Wall)
+    // Designed to ensure complete solvability and good spacing
+    const mapLayout = [
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        [1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
+        [1,0,1,0,1,0,1,1,1,0,1,0,1,1,1,1,1,1,0,1],
+        [1,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,1],
+        [1,0,1,1,1,0,1,0,1,1,1,1,1,0,1,1,0,1,0,1],
+        [1,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1],
+        [1,1,1,0,1,1,1,0,1,0,1,1,1,1,1,0,1,1,1,1],
+        [1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,1],
+        [1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,1],
+        [1,0,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1],
+        [1,0,1,0,1,1,1,0,1,1,1,0,1,0,1,1,1,1,0,1],
+        [1,0,0,0,1,0,1,0,0,0,1,0,0,0,1,0,0,1,0,1],
+        [1,1,1,0,1,0,1,1,1,0,1,1,1,0,1,0,1,1,0,1],
+        [1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1],
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+    ];
 
-            updateFlickerAudio(intensity) {
-                if (!this.isReady) return;
-                const now = this.audioCtx.currentTime;
-                const randomizedGain = 0.02 + Math.random() * 0.09 * intensity;
-                this.neonGain.gain.setValueAtTime(randomizedGain, now);
-            }
+    // Initialize Game Entities & Spawn Points
+    function initGame() {
+        player.x = 60;
+        player.y = 60;
+        imposter.x = 740;
+        imposter.y = 540;
+        imposter.state = 'PATROL';
+        sanity = 100;
+        score = 0;
+        gameTimer = 0;
+        document.getElementById('fragments-count').textContent = score;
+        document.getElementById('sanity-fill').style.width = '100%';
 
-            updateProximityThreat(distance, maxRange, impX, impY, plyX, plyY) {
-                if (!this.isReady) return;
-                const now = this.audioCtx.currentTime;
-                const normalizedDist = Math.max(0, Math.min(1, 1 - (distance / maxRange)));
-
-                const gainTarget = Math.pow(normalizedDist, 2.2) * 0.7;
-                const freqTarget = 38 + Math.pow(normalizedDist, 3) * 190;
-
-                this.threatGain.gain.setTargetAtTime(gainTarget, now, 0.08);
-                this.threatOscA.frequency.setTargetAtTime(freqTarget, now, 0.08);
-                this.threatOscB.frequency.setTargetAtTime(freqTarget + 4.5, now, 0.08);
-
-                if (this.pannerNode && this.pannerNode.positionX) {
-                    this.pannerNode.positionX.setValueAtTime(impX - plyX, now);
-                    this.pannerNode.positionY.setValueAtTime(impY - plyY, now);
-                    this.pannerNode.positionZ.setValueAtTime(-1, now);
-                }
-            }
-
-            switchStageSoundtrack(stageName) {
-                if (!this.isReady) return;
-                const now = this.audioCtx.currentTime;
-                if (stageName === 'DREAMCORE') {
-                    this.neonGain.gain.setTargetAtTime(0.0, now, 0.4);
-                    this.dreamGain.gain.setTargetAtTime(0.22, now, 0.4);
-                } else {
-                    this.neonGain.gain.setTargetAtTime(0.07, now, 0.4);
-                    this.dreamGain.gain.setTargetAtTime(0.0, now, 0.4);
-                }
-            }
-
-            playJumpscareScream() {
-                if (!this.isReady) return;
-                const now = this.audioCtx.currentTime;
-                const osc = this.audioCtx.createOscillator();
-                const gain = this.audioCtx.createGain();
-
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(750, now);
-                osc.frequency.exponentialRampToValueAtTime(70, now + 0.9);
-
-                gain.gain.setValueAtTime(1.0, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.9);
-
-                osc.connect(gain);
-                gain.connect(this.audioCtx.destination);
-                osc.start(now);
-                osc.stop(now + 0.9);
-            }
-        }
-
-        const WORLD_SIZE = 24;
-        const GRID_MAP = [
-            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1],
-            [1,0,1,0,1,0,1,1,1,1,0,1,0,1,1,1,1,1,1,0,1,1,0,1],
-            [1,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,1,0,1],
-            [1,0,1,1,1,1,1,1,0,1,1,1,0,1,0,1,1,0,1,1,0,1,0,1],
-            [1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,1],
-            [1,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1,0,1,0,1,1,1,0,1],
-            [1,0,0,1,0,1,0,0,0,1,0,0,0,1,0,1,0,1,0,0,0,1,0,1],
-            [1,0,1,1,0,1,1,1,0,1,1,1,0,1,0,1,0,1,1,1,0,1,0,1],
-            [1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1],
-            [1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,1,1],
-            [1,0,0,0,0,1,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,1],
-            [1,0,1,1,0,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1,0,1],
-            [1,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,1,0,1],
-            [1,1,0,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1],
-            [1,0,0,0,0,1,0,1,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1],
-            [1,0,1,1,0,1,0,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1],
-            [1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,1],
-            [1,1,0,1,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,0,1],
-            [1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,1],
-            [1,0,1,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,2,1],
-            [1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,2,1],
-            [1,0,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,2,2,1],
-            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        // Spawn 5 Core Memories (Fragments) in valid open hallways
+        fragments = [];
+        const spawnSpots = [
+            {x: 7, y: 1}, {x: 18, y: 1}, {x: 5, y: 7}, 
+            {x: 11, y: 13}, {x: 18, y: 11}
         ];
+        
+        spawnSpots.forEach(spot => {
+            fragments.push({
+                x: spot.x * TILE_SIZE + TILE_SIZE / 2,
+                y: spot.y * TILE_SIZE + TILE_SIZE / 2,
+                collected: false,
+                floatOffset: Math.random() * Math.PI
+            });
+        });
 
-        class ImpostorEntity {
-            constructor(spawnX, spawnY) {
-                this.x = spawnX;
-                this.y = spawnY;
-                this.baseSpeed = 2.0;
-                this.chaseSpeed = 3.3;
-                this.state = 'PATROL';
-                this.angle = 0;
-            }
+        // Spawn surreal dreamcore background assets
+        dreamAssets = [
+            { x: 3.5 * TILE_SIZE, y: 3.5 * TILE_SIZE, type: 'eye' },
+            { x: 13.5 * TILE_SIZE, y: 1.5 * TILE_SIZE, type: 'door' },
+            { x: 9.5 * TILE_SIZE, y: 9.5 * TILE_SIZE, type: 'cloud' },
+            { x: 16.5 * TILE_SIZE, y: 13.5 * TILE_SIZE, type: 'eye' }
+        ];
+    }
 
-            update(dt, playerX, playerY, mapData) {
-                const deltaX = playerX - this.x;
-                const deltaY = playerY - this.y;
-                const distance = Math.hypot(deltaX, deltaY);
+    // Input Listeners
+    window.addEventListener('keydown', (e) => {
+        keys[e.key.toLowerCase()] = true;
+        keys[e.code] = true;
+    });
 
-                if (distance < 0.65) {
-                    this.state = 'JUMPSCARE';
-                } else if (distance < 7.0) {
-                    this.state = 'CHASE';
-                } else {
-                    this.state = 'PATROL';
+    window.addEventListener('keyup', (e) => {
+        keys[e.key.toLowerCase()] = false;
+        keys[e.code] = false;
+    });
+
+    // UI Buttons
+    document.getElementById('start-btn').addEventListener('click', () => {
+        initAudio();
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('hud').classList.remove('hidden');
+        document.getElementById('vhs-timestamp').classList.remove('hidden');
+        document.getElementById('rec-indicator').classList.remove('hidden');
+        gameState = 'PLAYING';
+    });
+
+    document.getElementById('restart-btn').addEventListener('click', () => {
+        document.getElementById('gameover-screen').classList.add('hidden');
+        initGame();
+        gameState = 'PLAYING';
+    });
+
+    document.getElementById('win-restart-btn').addEventListener('click', () => {
+        document.getElementById('win-screen').classList.add('hidden');
+        initGame();
+        gameState = 'PLAYING';
+    });
+
+    // Collision Detection (Circle vs Grid Walls)
+    function checkWallCollision(x, y, radius) {
+        let startCol = Math.floor((x - radius) / TILE_SIZE);
+        let endCol = Math.floor((x + radius) / TILE_SIZE);
+        let startRow = Math.floor((y - radius) / TILE_SIZE);
+        let endRow = Math.floor((y + radius) / TILE_SIZE);
+
+        for (let row = startRow; row <= endRow; row++) {
+            for (let col = startCol; col <= endCol; col++) {
+                if (row >= 0 && row < MAP_HEIGHT && col >= 0 && col < MAP_WIDTH) {
+                    if (mapLayout[row][col] === 1) {
+                        let closestX = Math.max(col * TILE_SIZE, Math.min(x, (col + 1) * TILE_SIZE));
+                        let closestY = Math.max(row * TILE_SIZE, Math.min(y, (row + 1) * TILE_SIZE));
+                        let distX = x - closestX;
+                        let distY = y - closestY;
+                        if ((distX * distX + distY * distY) < (radius * radius)) {
+                            return true;
+                        }
+                    }
                 }
-
-                const currentSpeed = (this.state === 'CHASE') ? this.chaseSpeed : this.baseSpeed;
-
-                if (distance > 0.05) {
-                    const dirX = deltaX / distance;
-                    const dirY = deltaY / distance;
-
-                    const nextX = this.x + dirX * currentSpeed * dt;
-                    const nextY = this.y + dirY * currentSpeed * dt;
-
-                    if (mapData[Math.floor(nextY)][Math.floor(this.x)] !== 1) this.y = nextY;
-                    if (mapData[Math.floor(this.y)][Math.floor(nextX)] !== 1) this.x = nextX;
-                }
-
-                return distance;
             }
         }
+        return false;
+    }
 
-        class GameEngine {
-            constructor() {
-                this.canvas = document.getElementById('gameCanvas');
-                this.ctx = this.canvas.getContext('2d');
-                this.audioSys = new HorrorAudioSystem();
+    // --- UPDATE LOOP ---
+    function update() {
+        if (gameState !== 'PLAYING') return;
+        gameTimer++;
 
-                this.screenWidth = 0;
-                this.screenHeight = 0;
-                this.lastTimeStamp = performance.now();
+        // Player Movement (WASD / Arrows)
+        let dx = 0;
+        let dy = 0;
+        if (keys['w'] || keys['arrowup']) dy -= 1;
+        if (keys['s'] || keys['arrowdown']) dy += 1;
+        if (keys['a'] || keys['arrowleft']) dx -= 1;
+        if (keys['d'] || keys['arrowright']) dx += 1;
 
-                this.playerX = 2.5;
-                this.playerY = 2.5;
-                this.playerAngle = 0;
-                this.fov = Math.PI / 3;
-                this.sanity = 100;
+        if (dx !== 0 && dy !== 0) {
+            dx *= 0.7071;
+            dy *= 0.7071;
+        }
 
-                this.keysPressed = {};
-                this.impostor = new ImpostorEntity(18.5, 18.5);
+        let newX = player.x + dx * player.speed;
+        let newY = player.y + dy * player.speed;
 
-                this.currentStage = 'BACKROOMS';
-                this.flickerTimer = 0;
-                this.flickerFactor = 1.0;
+        if (!checkWallCollision(newX, player.y, player.radius)) player.x = newX;
+        if (!checkWallCollision(player.x, newY, player.radius)) player.y = newY;
 
-                this.screenOverlay = document.getElementById('screen-overlay');
-                this.btnStart = document.getElementById('btn-start');
-                this.hudStage = document.getElementById('hud-stage');
-                this.sanityBar = document.getElementById('sanity-bar');
-                this.jumpscareOverlay = document.getElementById('jumpscare-overlay');
+        // Imposter AI (Anomaly)
+        let distToPlayer = Math.hypot(player.x - imposter.x, player.y - imposter.y);
 
-                this.engineState = 'MENU';
+        if (distToPlayer < 220) {
+            imposter.state = 'CHASE';
+            imposter.speed = 2.4;
+        } else {
+            imposter.state = 'PATROL';
+            imposter.speed = 1.5;
+        }
 
-                this.handleResize();
-                this.registerEventListeners();
+        // Move imposter towards player or wander
+        let angleToPlayer = Math.atan2(player.y - imposter.y, player.x - imposter.x);
+        let impX = imposter.x + Math.cos(angleToPlayer) * imposter.speed;
+        let impY = imposter.y + Math.sin(angleToPlayer) * imposter.speed;
+
+        if (!checkWallCollision(impX, imposter.y, imposter.radius)) imposter.x = impX;
+        if (!checkWallCollision(imposter.x, impY, imposter.radius)) imposter.y = impY;
+
+        // Sanity drain based on proximity to Imposter
+        if (distToPlayer < 180) {
+            sanity -= (180 - distToPlayer) / 300;
+            if (Math.random() < 0.1) playBeep(120, 'sine', 0.05);
+        } else {
+            if (sanity < 100) sanity += 0.05; // slow recovery in safety
+        }
+
+        if (sanity <= 0) {
+            triggerGameOver("Your sanity dissolved into the endless yellow hum.");
+            return;
+        }
+
+        // Caught by Imposter
+        if (distToPlayer < player.radius + imposter.radius - 4) {
+            triggerGameOver("The anomaly consumed your core identity.");
+            return;
+        }
+
+        // Check Fragment Collection
+        fragments.forEach(frag => {
+            if (!frag.collected) {
+                let d = Math.hypot(player.x - frag.x, player.y - frag.y);
+                if (d < player.radius + 12) {
+                    frag.collected = true;
+                    score++;
+                    document.getElementById('fragments-count').textContent = score;
+                    playBeep(580, 'triangle', 0.15);
+
+                    if (score >= 5) {
+                        gameState = 'WIN';
+                        document.getElementById('win-screen').classList.remove('hidden');
+                        document.getElementById('hud').classList.add('hidden');
+                        document.getElementById('vhs-timestamp').classList.add('hidden');
+                        document.getElementById('rec-indicator').classList.add('hidden');
+                    }
+                }
             }
+        });
 
-            handleResize() {
-                this.screenWidth = this.canvas.width = window.innerWidth;
-                this.screenHeight = this.canvas.height = window.innerHeight;
+        // Update HUD Sanity bar
+        document.getElementById('sanity-fill').style.width = Math.max(0, sanity) + '%';
+    }
+
+    function triggerGameOver(reason) {
+        gameState = 'GAMEOVER';
+        document.getElementById('gameover-reason').textContent = reason;
+        document.getElementById('gameover-screen').classList.remove('hidden');
+        document.getElementById('hud').classList.add('hidden');
+        document.getElementById('vhs-timestamp').classList.add('hidden');
+        document.getElementById('rec-indicator').classList.add('hidden');
+        playBeep(80, 'sawtooth', 0.8);
+    }
+
+    // --- RENDER LOOP ---
+    function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 1. Draw Backrooms Floor (Carpet grid pattern)
+        ctx.fillStyle = '#d8b456';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.strokeStyle = '#c59f42';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < canvas.width; x += TILE_SIZE) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        }
+        for (let y = 0; y < canvas.height; y += TILE_SIZE) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+        }
+
+        // 2. Draw Dreamcore Surreal Assets
+        dreamAssets.forEach(asset => {
+            ctx.save();
+            if (asset.type === 'eye') {
+                // Floating surreal eye
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(asset.x, asset.y, 14, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#332f1a';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = '#991122';
+                ctx.beginPath();
+                ctx.arc(asset.x + Math.sin(gameTimer * 0.05) * 3, asset.y, 6, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (asset.type === 'door') {
+                // Out of place wooden door against wall
+                ctx.fillStyle = '#5c3a21';
+                ctx.fillRect(asset.x - 12, asset.y - 20, 24, 40);
+                ctx.fillStyle = '#e4be6b';
+                ctx.fillRect(asset.x + 6, asset.y, 3, 6);
+            } else if (asset.type === 'cloud') {
+                // Floating nostalgic cloud
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.beginPath();
+                ctx.arc(asset.x, asset.y, 12, 0, Math.PI * 2);
+                ctx.arc(asset.x + 10, asset.y + 4, 10, 0, Math.PI * 2);
+                ctx.arc(asset.x - 10, asset.y + 4, 10, 0, Math.PI * 2);
+                ctx.fill();
             }
+            ctx.restore();
+        });
 
-            registerEventListeners() {
-                window.addEventListener('resize', () => this.handleResize());
-
-                window.addEventListener('keydown', (e) => {
-                    this.keysPressed[e.code] = true;
-                });
-
-                window.addEventListener('keyup', (e) => {
-                    this.keysPressed[e.code] = false;
-                });
-
-                this.btnStart.addEventListener('click', () => {
-                    this.audioSys.init();
-                    this.launchGame();
-                });
-            }
-
-            launchGame() {
-                this.engineState = 'PLAYING';
-                this.screenOverlay.classList.add('hidden');
-                this.audioSys.switchStageSoundtrack(this.currentStage);
-            }
-
-            executeJumpscare() {
-                this.engineState = 'GAMEOVER';
-                this.audioSys.playJumpscareScream();
+        // 3. Draw Maze Walls (Yellow Wallpaper with molding)
+        for (let row = 0; row < MAP_HEIGHT; row++) {
+            for (let col = 0; col < MAP_WIDTH; col++) {
+                if (mapLayout[row][col] === 1) {
+                    ctx.fillStyle = '#d4b055';
+                    ctx.fillRect(col * TILE_SIZ
